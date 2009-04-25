@@ -60,6 +60,7 @@ module Wegasoo
                             Formatting.command_text(sp,ln.chomp)
                         end
                     end
+                    raise "command exited abnormally [#{$?.exitstatus}]" unless $?.exited?
                     # system(ret.values[0]) or raise("command exited with abnormal status: #{$?.exitstatus}") # in the future, should use something like Open3.popen3
                 end
             end
