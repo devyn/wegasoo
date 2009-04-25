@@ -17,8 +17,8 @@ example:
 And the output of @wegasoo example:time:utc@:
 
 <div style="font-family:monospace;background-color:black;color:white;">
-<span style="color:lime;">(<strong>1</strong>/<strong>1</strong>)</span> <span style="color:cyan;"><strong>the current time in UTC is:</strong></span>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Jan 1, 2009 0:00.00
+>> <span style="color:lime;">(<strong>1</strong>/<strong>1</strong>)</span> <span style="color:cyan;"><strong>the current time in UTC is:</strong></span>
+>> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Jan 1, 2009 0:00.00
 </div>
 
 I know what you're thinking. "I can just check the time!" But where Wegasoo comes in really useful is the replacement for a typical Makefile. This is an example Makefile.
