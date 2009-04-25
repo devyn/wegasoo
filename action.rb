@@ -1,7 +1,20 @@
 require 'task'
 require 'formatting'
 
+class Object
+    def it
+        self
+    end
+end
 module Wegasoo
+    class DelayObject
+        def initialize(prc)
+            @prc = prc
+        end
+        def it
+            @prc.call
+        end
+    end
     class Action
         attr :name
         def initialize(_name, str=nil, level=0, &builder)
@@ -21,6 +34,11 @@ module Wegasoo
             @tcn += 1
             @dependencies << dep
         end
+        def delay_object(&blk)
+            DelayObject.new blk
+        end
+        alias z delay_object
+        alias dynamic delay_object
         def fmb(tt,sp)
             Formatting.task(@cn,@tcn,sp,tt)
             proc do |ret|

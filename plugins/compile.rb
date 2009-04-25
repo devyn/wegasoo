@@ -1,8 +1,6 @@
 class WGS_Compile < Wegasoo::Task
     def initialize(file)
         @file = file
-        file =~ /\.(.+)$/; @type = $1
-        file =~ /^(.*)\..+$/; @base = File.basename($1)
     end
     def title
         case @type
@@ -20,6 +18,9 @@ class WGS_Compile < Wegasoo::Task
     end
     def run
         raise 'no block given' unless block_given?
+        @file = @file.it
+        @file =~ /\.(.+)$/; @type = $1
+        @file =~ /^(.*)\..+$/; @base = File.basename($1)
         case @type
         when 'c'
             yield :command => "gcc -o #@base #@file"

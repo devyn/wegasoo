@@ -6,6 +6,7 @@ class WGS_Clean < Wegasoo::Task
             @file = file
         end
         def title
+            @file = @file.it
             return "deleting #@file"
         end
         def run
