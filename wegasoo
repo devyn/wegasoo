@@ -57,22 +57,43 @@ when 'wgs:actions:remove'
     File.open(File.join(WEGASOO_CONF, 'actions'), 'w'){|f|f.write YAML.dump(y)}
 when 'wgs:list'
     pd = 0
-    prc = proc do |n,a|
+    puts "\e[32mwgs\e[0m\n\t\e[32mplugins\e[0m\n\t\t\e[32m\e[1madd\e[0m\n\t\t\e[32m\e[1mremove\e[0m\n\t\e[32mactions\e[0m\n\t\t\e[32m\e[1madd\e[0m\n\t\t\e[32m\e[1mremove\e[0m\n\t\e[32m\e[1mlist\e[0m"
+    prcu = proc do |n,a|
         case a
         when Hash
-            puts "#{"\t"*pd}#{n}"
+            puts "#{"\t"*pd}\e[34m#{n}\e[0m"
             pd += 1
-            a.each &prc
+            a.each &prcu
             pd -= 1
         when String
-            puts "#{"\t"*pd}\e[1m#{n}"
+            puts "#{"\t"*pd}\e[34m\e[1m#{n}\e[0m"
         end
     end
-    x = {}
-    x.update YAML.load_file(File.join(WEGASOO_CONF, 'actions'))
-    x.update YAML.load_file('.wgs/actions') if File.directory?('.wgs')
-    x.update YAML.load_file('/etc/wgs/actions') if File.directory?('/etc/wgs')
-    x.each &prc
+    prcs = proc do |n,a|
+        case a
+        when Hash
+            puts "#{"\t"*pd}\e[36m#{n}\e[0m"
+            pd += 1
+            a.each &prcs
+            pd -= 1
+        when String
+            puts "#{"\t"*pd}\e[36m\e[1m#{n}\e[0m"
+        end
+    end
+    prcd = proc do |n,a|
+        case a
+        when Hash
+            puts "#{"\t"*pd}\e[33m#{n}\e[0m"
+            pd += 1
+            a.each &prcd
+            pd -= 1
+        when String
+            puts "#{"\t"*pd}\e[33m\e[1m#{n}\e[0m"
+        end
+    end
+    YAML.load_file(File.join(WEGASOO_CONF, 'actions')).each &prcu
+    YAML.load_file('.wgs/actions').each &prcd if File.directory?('.wgs')
+    YAML.load_file('/etc/wgs/actions').each &prcs if File.directory?('/etc/wgs')
 else
     $was.run ad
 end
