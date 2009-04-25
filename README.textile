@@ -1,0 +1,23 @@
+Wegasoo (pronounced: weh gah seu) is a task executor.
+
+Think of actions being made up of tasks. That's how this works. If you think about Wegasoo in blocks, it is the best choice.
+
+It competes with others such as Sake, by being more verbose and transparent with a nice, colorful CLI.
+
+For example, here is a simple action:
+
+<pre><code>
+---
+example:
+  time:
+    utc: |
+      self << WGS_Message['the current time in UTC is:',z{Time.now.utc.strftime('%b %d, %Y %H:%M.%S')}]
+</code></pre>
+
+And the output of @wegasoo example:time:utc@:
+
+<div style="font-family:monospace;background-color:black;color:white;">
+<span style="color:lime;">(<strong>1</strong>/<strong>1</strong>)</span> <span style="color:cyan;"><strong>the current time in UTC is:</strong></span>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Jan 1, 2009 0:00.00
+</div>
+
