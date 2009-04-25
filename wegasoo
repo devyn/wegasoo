@@ -1,0 +1,69 @@
+#!/usr/bin/env ruby
+$:.unshift ENV['WEGASOO_PATH'] if ENV['WEGASOO_PATH']
+require 'action_space'
+
+WEGASOO_CONF = File.expand_path(ENV['WEGASOO_CONF']||"~/.wegasoo")
+
+unless File.directory?(WEGASOO_CONF)
+    Wegasoo::Formatting.special("initializing Wegasoo in #{WEGASOO_CONF}")
+    Dir.mkdir(WEGASOO_CONF)
+    Dir.mkdir(File.join(WEGASOO_CONF,'plugins'))
+    File.open(File.join(WEGASOO_CONF,'actions'),'w') do |f|
+        f.write "--- {}\n"
+    end
+end
+
+
+Dir[File.join(WEGASOO_CONF, 'plugins/*.rb')].each{|p|load p}
+
+$was = Wegasoo::ActionSpace.new
+$was.load_file File.join(WEGASOO_CONF, 'actions')
+
+if File.directory?('.wgs')
+    Dir['.wgs/plugins/*.rb'].each{|p|load p}
+    $was.load_file '.wgs/actions'
+end
+
+if File.directory?('/etc/wgs')
+    Dir['/etc/wgs/plugins/*.rb'].each{|p|load p}
+    $was.load_file '/etc/wgs/actions'
+end
+
+case (ad = ARGV.shift)
+when 'wgs:install'
+    file = ARGV.shift
+    Wegasoo::Formatting.special("installing #{file}")
+    y = YAML.load_file(File.join(WEGASOO_CONF, 'actions'))
+    y.update(YAML.load_file(file))
+    File.open(File.join(WEGASOO_CONF, 'actions'), 'w'){|f|f.write YAML.dump(y)}
+when 'wgs:remove'
+    task = ARGV.shift
+    Wegasoo::Formatting.special("removing #{task}")
+    y = YAML.load_file(File.join(WEGASOO_CONF, 'actions'))
+    cc = y
+    task.split(":")[0..-2].each do |seg|
+        cc = cc[seg]
+    end
+    cc.delete task.split(":")[-1]
+    File.open(File.join(WEGASOO_CONF, 'actions'), 'w'){|f|f.write YAML.dump(y)}
+when 'wgs:list'
+    pd = 0
+    prc = proc do |n,a|
+        case a
+        when Hash
+            puts "#{"\t"*pd}#{n}"
+            pd += 1
+            a.each &prc
+            pd -= 1
+        when String
+            puts "#{"\t"*pd}\e[1m#{n}"
+        end
+    end
+    x = {}
+    x.update YAML.load_file(File.join(WEGASOO_CONF, 'actions'))
+    x.update YAML.load_file('.wgs/actions') if File.directory?('.wgs')
+    x.update YAML.load_file('/etc/wgs/actions') if File.directory?('.wgs')
+    x.each &prc
+else
+    $was.run ad
+end
