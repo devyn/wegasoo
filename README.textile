@@ -21,3 +21,54 @@ And the output of @wegasoo example:time:utc@:
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Jan 1, 2009 0:00.00
 </div>
 
+I know what you're thinking. "I can just check the time!" But where Wegasoo comes in really useful is the replacement for a typical Makefile. This is an example Makefile.
+
+<pre><code>
+# this Makefile is for the project "simpc"
+
+simpc.c:
+    gcc -o simpc simpc.c
+
+all: simpc.c
+
+clean:
+    rm -f simpc
+
+</code></pre>
+
+The output of @make all clean@:
+
+<div style="font-family:monospace;background-color:black;color:white">
+gcc -o simpc simpc.c
+rm -f simpc
+</div>
+
+Not very verbose or attractive, is it. Now, translated into Wegasoo:
+
+<pre><code>
+---
+simpc:
+  make:
+    simpc.c: |
+      self << WGS_Compile['simpc.c']
+    all: |
+      dependency 'simpc:make:simpc.c'
+    clean: |
+      self << WGS_Clean['simpc']
+</code></pre>
+
+The output of @wegasoo simpc:make:all; wegasoo simpc:make:clean@:
+
+<div style="font-family:monospace;background-color:black;color:white">
+>> <span style="color:lime">(<strong>1</strong>/<strong>1</strong>)</span> <span style="color:magenta"><strong>simpc:make:simpc.c</strong></span>
+>> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:lime">(<strong>1</strong>/<strong>1</strong>)</span> <span style="color:cyan"><strong>compiling C object: simpc.c</strong></span>
+>> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:blue"><strong>gcc -o simpc simpc.c</strong></span>
+>> <span style="color:lime">(<strong>1</strong>/<strong>2</strong>)</span> <span style="color:cyan"><strong>cleaning up</strong></span>
+>> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:lime">(<strong>2</strong>/<strong>2</strong>)</span> <span style="color:cyan"><strong>deleting simpc</strong></span>
+</div>
+
+That's much better. And not much more complicated to write. This way, if you have to compile a very large program, you are kept up to date.
+
+Writing plugins is easy too. Take a look at the ones in the plugins/ dir for an example.
+
+To see everything you can do, run @wegasoo wgs:list@.
