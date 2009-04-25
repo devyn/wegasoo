@@ -16,8 +16,8 @@ example:
 
 And the output of @wegasoo example:time:utc@:
 
-<div style="font-family:monospace;background-color:black;color:white;">
-<span style="color:lime;">(<strong>1</strong>/<strong>1</strong>)</span> <span style="color:cyan;"><strong>the current time in UTC is:</strong></span>
+<div style="font-family:monospace !important;background-color:black !important;color:white !important;">
+<span style="color:lime !important;">(<strong>1</strong>/<strong>1</strong>)</span> <span style="color:cyan !important;"><strong>the current time in UTC is:</strong></span>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Jan 1, 2009 0:00.00
 </div>
 
