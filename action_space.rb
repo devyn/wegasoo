@@ -26,6 +26,7 @@ module Wegasoo
                 act.run(level)
             else
                 Formatting.failure(level, "action not found")
+                exit 1
             end
         end
     end

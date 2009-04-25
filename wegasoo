@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 $:.unshift ENV['WEGASOO_PATH'] if ENV['WEGASOO_PATH']
 require 'action_space'
+require 'ftools'
 
 WEGASOO_CONF = File.expand_path(ENV['WEGASOO_CONF']||"~/.wegasoo")
 
@@ -30,15 +31,23 @@ if File.directory?('/etc/wgs')
 end
 
 case (ad = ARGV.shift)
-when 'wgs:install'
+when 'wgs:plugins:add'
     file = ARGV.shift
-    Wegasoo::Formatting.special("installing #{file}")
+    Wegasoo::Formatting.special("adding plugin #{file}")
+    File.copy(file,File.join(WEGASOO_CONF,'plugins',File.basename(file)))
+when 'wgs:plugins:remove'
+    plugin = ARGV.shift
+    Wegasoo::Formatting.special("removing plugin #{plugin}")
+    File.delete File.join(WEGASOO_CONF,'plugins',File.basename(plugin))
+when 'wgs:actions:add'
+    file = ARGV.shift
+    Wegasoo::Formatting.special("adding action #{file}")
     y = YAML.load_file(File.join(WEGASOO_CONF, 'actions'))
     y.update(YAML.load_file(file))
     File.open(File.join(WEGASOO_CONF, 'actions'), 'w'){|f|f.write YAML.dump(y)}
-when 'wgs:remove'
+when 'wgs:actions:remove'
     task = ARGV.shift
-    Wegasoo::Formatting.special("removing #{task}")
+    Wegasoo::Formatting.special("removing action #{task}")
     y = YAML.load_file(File.join(WEGASOO_CONF, 'actions'))
     cc = y
     task.split(":")[0..-2].each do |seg|
@@ -62,7 +71,7 @@ when 'wgs:list'
     x = {}
     x.update YAML.load_file(File.join(WEGASOO_CONF, 'actions'))
     x.update YAML.load_file('.wgs/actions') if File.directory?('.wgs')
-    x.update YAML.load_file('/etc/wgs/actions') if File.directory?('.wgs')
+    x.update YAML.load_file('/etc/wgs/actions') if File.directory?('/etc/wgs')
     x.each &prc
 else
     $was.run ad
