@@ -5,6 +5,8 @@ class WGS_Compile < Wegasoo::Task
     end
     def title
         @file = @file.it
+        @file =~ /\.(.+)$/; @type = $1
+        @file =~ /^(.*)\..+$/; @base = File.basename($1)
         case @type
         when 'c'
             return "compiling C object: #{File.basename(@file)}"
@@ -18,13 +20,12 @@ class WGS_Compile < Wegasoo::Task
             return "compiling Python module: #{File.basename(@file)}"
         when 'nqc'
             return "downloading NQC code: #{File.basename(@file)}"
+        else
+            return "???"
         end
     end
     def run
         raise 'no block given' unless block_given?
-        @file = @file.it
-        @file =~ /\.(.+)$/; @type = $1
-        @file =~ /^(.*)\..+$/; @base = File.basename($1)
         case @type
         when 'c'
             yield :command => "gcc #{@options.it} -o #@base #@file"
